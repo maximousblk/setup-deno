@@ -1,14 +1,14 @@
-name: Update tags
+name: Tags
 
 on:
   release:
-    types: [published, edited]
+    types: [published]
 
 jobs:
-  actions-tagger:
+  update:
     runs-on: windows-latest
     steps:
-      - name: Update tags
+      - name: Update convenience tags
         uses: Actions-R-Us/actions-tagger@latest
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
