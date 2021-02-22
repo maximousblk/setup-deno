@@ -1,11 +1,14 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'UN1QE Action'
+description: 'Action description'
+author: 'Maximous Black'
+branding:
+  icon: 'box'
+  color: 'gray-dark'
 inputs:
-  milliseconds: # change this
+  milliseconds:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'time in millisecons'
+    default: '50'
 runs:
   using: 'node12'
   main: 'dist/index.js'
