@@ -1,15 +1,11 @@
 {
-  "name": "action",
-  "version": "0.0.0-development",
-  "private": true,
-  "description": "GitHub Action",
   "main": "build/main.js",
   "scripts": {
-    "build": "tsc",
-    "build:watch": "tsc --watch",
     "fmt": "prettier --write .",
     "fmt:check": "prettier --check .",
     "lint": "eslint src/**/*.ts",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
     "pkg": "ncc build --license LICENSE --minify",
     "pkg:watch": "ncc build --license LICENSE --watch",
     "all": "yarn fmt && yarn lint && yarn build && yarn pkg"
