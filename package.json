@@ -7,7 +7,7 @@
     "build:watch": "tsc --watch",
     "pkg": "ncc build --license LICENSE --minify",
     "pkg:watch": "ncc build --license LICENSE --watch",
-    "all": "yarn fmt && yarn lint && yarn build && yarn pkg"
+    "all": "yarn fmt && yarn build && yarn pkg"
   },
   "repository": {
     "type": "git",
