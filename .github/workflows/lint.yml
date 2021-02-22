@@ -36,5 +36,5 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Lint
-        run: yarn fmt
+      - name: Check formatting
+        run: yarn fmt:check
