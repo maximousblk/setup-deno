@@ -4,8 +4,15 @@ on:
   release:
     types: [published]
 
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Semver tag
+        required: true
+
 jobs:
   release:
+    if: github.event.inputs
     runs-on: ubuntu-20.04
     timeout-minutes: 20
 
@@ -19,19 +26,20 @@ jobs:
           deno-version: v1.7.2
 
       - name: Generate Release Notes
-        run: deno run -A https://deno.land/x/ghlog/ghlog.ts ${{ github.repository }} -v '${{ github.event.release.tag_name }}'
+        run: deno run -A https://deno.land/x/ghlog/ghlog.ts ${{ github.repository }} -v '${{ github.event.inputs.tag }}'
 
-      - name: Release v${{ github.event.release.tag_name }}
+      - name: Release v${{ github.event.inputs.tag }}
         uses: ncipollo/release-action@v1
         with:
-          tag: 'v${{ github.event.release.tag_name }}'
-          name: 'v${{ github.event.release.tag_name }}'
+          tag: 'v${{ github.event.inputs.tag }}'
+          name: 'v${{ github.event.inputs.tag }}'
           bodyFile: 'CHANGELOG.md'
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
   tag:
     runs-on: windows-latest
+    if: github.event.action = 'published'
     steps:
       - name: Update convenience tags
         uses: Actions-R-Us/actions-tagger@latest
