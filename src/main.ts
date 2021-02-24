@@ -10,7 +10,7 @@ async function main() {
     } else {
       const err = 'No version specified.';
       core.error(err);
-      // throw new Error(err);
+      throw new Error(err);
     }
   } catch (e) {
     const err = e as Error;

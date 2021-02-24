@@ -34,6 +34,8 @@ export async function getDownloadLink(os: Platform, version?: string): Promise<s
   if (version == 'canary') {
     const commit = await fetch('https://dl.deno.land/canary-latest.txt').then((res) => res.text());
     dl = `https://dl.deno.land/canary/${commit.replace('\n', '')}/${zip}`;
+  } else if (version == 'latest') {
+    dl = `https://github.com/denoland/deno/releases/latest/download/${zip}`;
   } else if (version) {
     dl = `https://github.com/denoland/deno/releases/download/v${version}/${zip}`;
   } else {
@@ -73,7 +75,7 @@ export async function clearVersion(version: string): Promise<string> {
     if (!version) {
       const err = `Unable to find Deno version '${version}'`;
       core.error(err);
-      // throw new Error(err);
+      throw new Error(err);
     }
   }
 
@@ -83,7 +85,13 @@ export async function clearVersion(version: string): Promise<string> {
 async function queryLatestMatch(version: string): Promise<string> {
   if (version === 'canary') return version;
 
-  const versions: string[] = (await getDenoVersions()).sort(semver.compare);
+  const denoVersions = await getDenoVersions().then((arr) => arr.sort(semver.compare).reverse());
+
+  console.log('latest:', denoVersions[0]);
+
+  if (version === 'latest') return denoVersions[0];
+
+  const versions: string[] = denoVersions;
   core.debug(`found ${versions.length} Deno versions`);
 
   for (let i = versions.length - 1; i >= 0; --i) {

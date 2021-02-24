@@ -36,7 +36,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.downloadDeno = void 0;
+exports.install = exports.downloadDeno = void 0;
 const path = __importStar(__nccwpck_require__(5622));
 const os = __importStar(__nccwpck_require__(2087));
 const tc = __importStar(__nccwpck_require__(7784));
@@ -46,37 +46,26 @@ let tempDirectory = process.env['RUNNER_TEMP'] || '';
 let cacheRoot = process.env['RUNNER_TOOL_CACHE'] || '';
 // If directories not found, place them in common temp locations
 if (!tempDirectory || !cacheRoot) {
-    let baseLocation;
-    if (process.platform === 'win32') {
-        // On windows use the USERPROFILE env variable
-        baseLocation = process.env['USERPROFILE'] || 'C:\\';
-    }
-    else {
-        if (process.platform === 'darwin') {
-            baseLocation = process.env['HOME'] || '/Users';
-        }
-        else {
-            baseLocation = process.env['HOME'] || '/home';
-        }
-    }
+    const homedir = os.homedir();
+    core.debug(`home directory: ${homedir}`);
     if (!tempDirectory) {
-        tempDirectory = path.join(baseLocation, 'actions', 'temp');
+        tempDirectory = path.join(homedir, 'actions', 'temp');
     }
     if (!cacheRoot) {
-        cacheRoot = path.join(baseLocation, 'actions', 'cache');
+        cacheRoot = path.join(homedir, 'actions', 'cache');
     }
     process.env['RUNNER_TEMP'] = tempDirectory;
     process.env['RUNNER_TOOL_CACHE'] = cacheRoot;
 }
 function downloadDeno(version) {
     return __awaiter(this, void 0, void 0, function* () {
-        core.debug(`downloading Deno '${version}'`);
+        core.debug(`downloading deno '${version}'`);
         version = yield utils_1.clearVersion(version);
         core.debug(`resolved Deno '${version}'`);
         const downloadUrl = yield utils_1.getDownloadLink(utils_1.getPlatform(), version);
-        core.debug(`download Deno from '${downloadUrl}'`);
+        core.debug(`downloading from '${downloadUrl}'`);
         const downloadPath = yield tc.downloadTool(downloadUrl);
-        core.debug(`downloaded Deno to '${downloadPath}'`);
+        core.debug(`downloading to '${downloadPath}'`);
         let extPath = yield tc.extractZip(downloadPath);
         core.debug(`deno file path '${extPath}'`);
         const toolPath = yield tc.cacheDir(extPath, 'deno', version);
@@ -84,7 +73,7 @@ function downloadDeno(version) {
     });
 }
 exports.downloadDeno = downloadDeno;
-function default_1(version) {
+function install(version) {
     return __awaiter(this, void 0, void 0, function* () {
         let toolPath = tc.find('deno', version);
         if (toolPath) {
@@ -92,7 +81,7 @@ function default_1(version) {
         }
         else {
             // If not found in cache, download
-            core.debug(`Downloading deno at version ${version}`);
+            core.debug(`Deno '${version}' not found in cache. downloading...`);
             toolPath = yield downloadDeno(version);
         }
         // prepend the tools path. instructs the agent to prepend for future tasks
@@ -101,7 +90,8 @@ function default_1(version) {
         core.addPath(process.env.DENO_INSTALL_ROOT || path.join(os.homedir(), '.deno', 'bin'));
     });
 }
-exports.default = default_1;
+exports.install = install;
+exports.default = install;
 
 
 /***/ }),
@@ -156,7 +146,7 @@ function main() {
             else {
                 const err = 'No version specified.';
                 core.error(err);
-                // throw new Error(err);
+                throw new Error(err);
             }
         }
         catch (e) {
@@ -240,6 +230,9 @@ function getDownloadLink(os, version) {
             const commit = yield node_fetch_1.default('https://dl.deno.land/canary-latest.txt').then((res) => res.text());
             dl = `https://dl.deno.land/canary/${commit.replace('\n', '')}/${zip}`;
         }
+        else if (version == 'latest') {
+            dl = `https://github.com/denoland/deno/releases/latest/download/${zip}`;
+        }
         else if (version) {
             dl = `https://github.com/denoland/deno/releases/download/v${version}/${zip}`;
         }
@@ -283,7 +276,7 @@ function clearVersion(version) {
             if (!version) {
                 const err = `Unable to find Deno version '${version}'`;
                 core.error(err);
-                // throw new Error(err);
+                throw new Error(err);
             }
         }
         return version;
@@ -294,7 +287,11 @@ function queryLatestMatch(version) {
     return __awaiter(this, void 0, void 0, function* () {
         if (version === 'canary')
             return version;
-        const versions = (yield getDenoVersions()).sort(semver.compare);
+        const denoVersions = yield getDenoVersions().then((arr) => arr.sort(semver.compare).reverse());
+        console.log('latest:', denoVersions[0]);
+        if (version === 'latest')
+            return denoVersions[0];
+        const versions = denoVersions;
         core.debug(`found ${versions.length} Deno versions`);
         for (let i = versions.length - 1; i >= 0; --i) {
             if (semver.satisfies(versions[i], version)) {

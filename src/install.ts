@@ -8,38 +8,30 @@ let tempDirectory: string = process.env['RUNNER_TEMP'] || '';
 let cacheRoot: string = process.env['RUNNER_TOOL_CACHE'] || '';
 // If directories not found, place them in common temp locations
 if (!tempDirectory || !cacheRoot) {
-  let baseLocation: string;
-  if (process.platform === 'win32') {
-    // On windows use the USERPROFILE env variable
-    baseLocation = process.env['USERPROFILE'] || 'C:\\';
-  } else {
-    if (process.platform === 'darwin') {
-      baseLocation = process.env['HOME'] || '/Users';
-    } else {
-      baseLocation = process.env['HOME'] || '/home';
-    }
-  }
+  const homedir = os.homedir();
+  core.debug(`home directory: ${homedir}`);
+
   if (!tempDirectory) {
-    tempDirectory = path.join(baseLocation, 'actions', 'temp');
+    tempDirectory = path.join(homedir, 'actions', 'temp');
   }
   if (!cacheRoot) {
-    cacheRoot = path.join(baseLocation, 'actions', 'cache');
+    cacheRoot = path.join(homedir, 'actions', 'cache');
   }
   process.env['RUNNER_TEMP'] = tempDirectory;
   process.env['RUNNER_TOOL_CACHE'] = cacheRoot;
 }
 
 export async function downloadDeno(version: string): Promise<string> {
-  core.debug(`downloading Deno '${version}'`);
+  core.debug(`downloading deno '${version}'`);
 
   version = await clearVersion(version);
   core.debug(`resolved Deno '${version}'`);
 
   const downloadUrl = await getDownloadLink(getPlatform(), version);
-  core.debug(`download Deno from '${downloadUrl}'`);
+  core.debug(`downloading from '${downloadUrl}'`);
 
   const downloadPath = await tc.downloadTool(downloadUrl);
-  core.debug(`downloaded Deno to '${downloadPath}'`);
+  core.debug(`downloading to '${downloadPath}'`);
 
   let extPath = await tc.extractZip(downloadPath);
   core.debug(`deno file path '${extPath}'`);
@@ -49,14 +41,14 @@ export async function downloadDeno(version: string): Promise<string> {
   return toolPath;
 }
 
-export default async function (version: string): Promise<void> {
+export async function install(version: string): Promise<void> {
   let toolPath = tc.find('deno', version);
 
   if (toolPath) {
     core.debug(`Found in cache @ ${toolPath}`);
   } else {
     // If not found in cache, download
-    core.debug(`Downloading deno at version ${version}`);
+    core.debug(`Deno '${version}' not found in cache. downloading...`);
     toolPath = await downloadDeno(version);
   }
 
@@ -65,3 +57,5 @@ export default async function (version: string): Promise<void> {
   // set `deno install` root
   core.addPath(process.env.DENO_INSTALL_ROOT || path.join(os.homedir(), '.deno', 'bin'));
 }
+
+export default install;
