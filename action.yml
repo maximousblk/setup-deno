@@ -7,7 +7,7 @@ branding:
 inputs:
   version:
     description: 'Deno version'
-    default: "v1.x"
+    default: 'v1.x'
     required: false
 runs:
   using: 'node12'

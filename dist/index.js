@@ -42,7 +42,6 @@ const os = __importStar(__nccwpck_require__(2087));
 const tc = __importStar(__nccwpck_require__(7784));
 const core = __importStar(__nccwpck_require__(2186));
 const utils_1 = __nccwpck_require__(4140);
-// https://github.com/denoland/deno/releases/download/v1.7.5/deno-x86_64-unknown-linux-gnu.zip
 let tempDirectory = process.env['RUNNER_TEMP'] || '';
 let cacheRoot = process.env['RUNNER_TOOL_CACHE'] || '';
 // If directories not found, place them in common temp locations
@@ -149,8 +148,9 @@ const install_1 = __importDefault(__nccwpck_require__(7611));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let version = '1';
+            let version = core.getInput('version');
             if (version) {
+                core.debug(`input deno version: ${version}`);
                 install_1.default(version);
             }
             else {
