@@ -5,7 +5,7 @@ on:
   push:
 
 jobs:
-  pkg:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -24,21 +24,3 @@ jobs:
 
       - name: Package
         run: yarn pkg
-
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        deno: ['v1.x', '1', 'v1.7.1', 'v1', 'canary', 'v404']
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-
-      - name: Run action
-        uses: ./
-        with:
-          version: ${{ matrix.deno }}
-
-      - name: Run Deno
-        run: deno --version
