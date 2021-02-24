@@ -4,8 +4,6 @@ import * as tc from '@actions/tool-cache';
 import * as core from '@actions/core';
 import { clearVersion, getDownloadLink, getPlatform } from './utils';
 
-// https://github.com/denoland/deno/releases/download/v1.7.5/deno-x86_64-unknown-linux-gnu.zip
-
 let tempDirectory: string = process.env['RUNNER_TEMP'] || '';
 let cacheRoot: string = process.env['RUNNER_TOOL_CACHE'] || '';
 // If directories not found, place them in common temp locations

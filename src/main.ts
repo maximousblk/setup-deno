@@ -5,6 +5,7 @@ async function main() {
   try {
     let version = core.getInput('version');
     if (version) {
+      core.debug(`input deno version: ${version}`);
       install(version);
     } else {
       const err = 'No version specified.';
