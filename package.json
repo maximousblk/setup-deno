@@ -5,7 +5,7 @@
     "fmt:check": "prettier --check .",
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "pkg": "ncc build --license LICENSE --minify",
+    "pkg": "ncc build --license LICENSE",
     "pkg:watch": "ncc build --license LICENSE --watch",
     "all": "yarn fmt && yarn build && yarn pkg"
   },
@@ -17,15 +17,17 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.2.6",
+    "@actions/tool-cache": "^1.6.1",
+    "node-fetch": "^2.6.1",
     "semver": "^7.3.4"
   },
   "devDependencies": {
     "@types/node": "^14.14.31",
+    "@types/node-fetch": "^2.5.8",
     "@types/semver": "^7.3.4",
     "@vercel/ncc": "^0.27.0",
     "js-yaml": "^4.0.0",
     "prettier": "2.2.1",
-    "ts-node": "^9.1.1",
     "typescript": "^4.1.5"
   }
 }

@@ -27,6 +27,10 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        deno: ['v1.x', '1', 'v1.7.1', 'v1', 'canary', 'v404']
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -34,4 +38,7 @@ jobs:
       - name: Run action
         uses: ./
         with:
-          milliseconds: 1000
+          version: ${{ matrix.deno }}
+
+      - name: Run Deno
+        run: deno --version

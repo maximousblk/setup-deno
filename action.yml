@@ -1,14 +1,13 @@
-name: 'UN1QE Action'
-description: 'Action description'
+name: 'Setup Deno'
+description: 'GitHub Actions to install and set up Deno'
 author: 'Maximous Black'
 branding:
   icon: 'box'
   color: 'gray-dark'
 inputs:
-  milliseconds:
-    required: true
-    description: 'time in millisecons'
-    default: '50'
+  version:
+    required: false
+    description: 'Deno version'
 runs:
   using: 'node12'
   main: 'dist/index.js'
