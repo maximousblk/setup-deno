@@ -6,7 +6,7 @@ GitHub Action to set up Deno.
 
 ### Inputs
 
-- `version` - Deno version. possible values: `<version>`, `'canary'` and `'latest'` (default: `'latest'`)
+- `version` - Deno version. values: `[version]`, `'canary'` and `'latest'` (default: `'latest'`)
 
 ### Outputs
 
@@ -44,7 +44,7 @@ steps:
   - uses: actions/checkout@v2
 
   - name: Setup Deno (${{ matrix.deno }})
-    uses: maximousblk/setup-deno@v2
+    uses: maximousblk/setup-deno@v1
     with:
       version: ${{ matrix.deno }}
 

@@ -53,7 +53,7 @@ export async function install(version: string): Promise<void> {
     toolPath = await downloadDeno(version);
   }
 
-  setOutput('deno_path', toolPath);
+  setOutput('deno_path', toolPath + '/deno');
 
   // prepend the tools path. instructs the agent to prepend for future tasks
   addPath(toolPath);

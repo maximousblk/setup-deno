@@ -1,5 +1,5 @@
 name: 'Setup Deno'
-description: 'GitHub Actions to set up Deno'
+description: 'GitHub Action to set up Deno'
 author: 'Maximous Black'
 branding:
   icon: 'package'
