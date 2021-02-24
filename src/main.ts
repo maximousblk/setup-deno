@@ -1,20 +1,20 @@
-import * as core from '@actions/core';
+import { getInput, debug, error, setFailed } from '@actions/core';
 import install from './install';
 
 async function main() {
   try {
-    let version = core.getInput('version');
+    let version = getInput('version');
     if (version) {
-      core.debug(`input deno version: ${version}`);
+      debug(`input deno version: ${version}`);
       install(version);
     } else {
       const err = 'No version specified.';
-      core.error(err);
+      error(err);
       throw new Error(err);
     }
   } catch (e) {
     const err = e as Error;
-    core.setFailed(err.message);
+    setFailed(err.message);
   }
 }
 

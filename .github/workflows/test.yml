@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deno: ['v1.7.1', 'v1.6.x', 'v1', '1', 'latest', 'canary']
+        deno: ['v1.7.0', 'v1.7.x', 'v1', '1', 'latest', 'canary']
 
     steps:
       - name: Checkout repo
@@ -21,5 +21,13 @@ jobs:
         with:
           version: ${{ matrix.deno }}
 
-      - name: Run Deno
+      - name: Deno version
         run: deno --version
+
+      - name: Deno info
+        run: deno info
+
+      - name: Deno path
+        run: |
+          ${{ runner.os == 'Windows' && ' Set-Alias whereis where.exe' || ''}}
+          whereis deno

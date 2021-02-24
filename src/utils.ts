@@ -1,8 +1,9 @@
 import fetch from 'node-fetch';
-import * as core from '@actions/core';
+import { debug, error } from '@actions/core';
 import { platform } from 'os';
-import { Platform } from './types';
-import * as semver from 'semver';
+import { compare, clean, valid, satisfies } from 'semver';
+
+type Platform = 'ubuntu' | 'macos' | 'windows' | 'darwin' | 'linux' | 'win32';
 
 export const denoZipName = {
   ubuntu: 'deno-x86_64-unknown-linux-gnu.zip',
@@ -13,22 +14,22 @@ export const denoZipName = {
   win32: 'deno-x86_64-pc-windows-msvc.zip',
 };
 
-export async function getDenoVersions() {
+export async function getDenoVersions(): Promise<string[]> {
   const versions = await fetch('https://github.com/denoland/deno_website2/raw/main/versions.json').then((res) =>
     res.json()
   );
-  return versions.cli;
+  return versions.cli.sort(compare).reverse();
 }
 
 export async function getDownloadLink(os: Platform, version?: string): Promise<string> {
-  core.debug(`os: ${os}`);
-  core.debug(`input version: ${version}`);
+  debug(`os: ${os}`);
+  debug(`input version: ${version}`);
 
   version = await clearVersion(version ?? '');
-  core.debug(`parsed version: ${version}`);
+  debug(`parsed version: ${version}`);
 
   const zip: string = denoZipName[os];
-  core.debug(`zip: ${zip}`);
+  debug(`zip: ${zip}`);
 
   let dl: string;
   if (version == 'canary') {
@@ -41,7 +42,7 @@ export async function getDownloadLink(os: Platform, version?: string): Promise<s
   } else {
     dl = `https://github.com/denoland/deno/releases/latest/download/${zip}`;
   }
-  core.debug(`download: ${dl}`);
+  debug(`download: ${dl}`);
 
   return dl;
 }
@@ -57,7 +58,7 @@ export function getPlatform(): Platform {
     return 'windows';
   } else {
     const err = `Unexpected OS ${ptfm}`;
-    core.error(err);
+    error(err);
     throw new Error(err);
   }
 }
@@ -65,16 +66,20 @@ export function getPlatform(): Platform {
 export async function clearVersion(version: string): Promise<string> {
   if (version === 'canary') return version;
 
-  const c = semver.clean(version) || '';
+  const denoVersions = await getDenoVersions();
 
-  if (semver.valid(c)) {
+  if (version === 'latest') return denoVersions[0];
+
+  const c = clean(version) || '';
+  if (valid(c)) {
     version = c;
   } else {
     // query deno tags for a matching version
     version = await queryLatestMatch(version);
+
     if (!version) {
       const err = `Unable to find Deno version '${version}'`;
-      core.error(err);
+      error(err);
       throw new Error(err);
     }
   }
@@ -85,26 +90,23 @@ export async function clearVersion(version: string): Promise<string> {
 async function queryLatestMatch(version: string): Promise<string> {
   if (version === 'canary') return version;
 
-  const denoVersions = await getDenoVersions().then((arr) => arr.sort(semver.compare).reverse());
-
-  console.log('latest:', denoVersions[0]);
+  const denoVersions = await getDenoVersions();
 
   if (version === 'latest') return denoVersions[0];
 
-  const versions: string[] = denoVersions;
-  core.debug(`found ${versions.length} Deno versions`);
+  debug(`found ${denoVersions.length} Deno versions`);
 
-  for (let i = versions.length - 1; i >= 0; --i) {
-    if (semver.satisfies(versions[i], version)) {
-      version = versions[i];
+  for (let i = 0; i < denoVersions.length; ++i) {
+    if (satisfies(denoVersions[i], version)) {
+      version = denoVersions[i];
       break;
     }
   }
 
   if (version) {
-    core.debug(`matched: ${version}`);
+    debug(`matched: ${version}`);
   } else {
-    core.debug(`'${version}' did not match any version`);
+    debug(`'${version}' did not match any version`);
   }
 
   return version;

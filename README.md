@@ -4,6 +4,17 @@ GitHub Action to set up Deno.
 
 # Usage
 
+### Inputs
+
+- `version` - Deno version. possible values: `<version>`, `'canary'` and `'latest'` (default: `'latest'`)
+
+### Outputs
+
+- `version` - tag of the installed Deno
+- `deno_path` - path of the installed deno
+
+# Examples
+
 Basic:
 
 ```yml
@@ -27,16 +38,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deno: ['v1.5', 'v1.6', 'v1.7', 'v1', 'canary']
-    steps:
-      - uses: actions/checkout@v2
+        deno: ['v1.7.1', 'v1.6.x', 'v1', '1', 'latest', 'canary']
 
-      - name: Setup Deno (${{ matrix.deno }})
-        uses: maximousblk/setup-deno@v2
-        with:
-          version: ${{ matrix.deno }}
+steps:
+  - uses: actions/checkout@v2
 
-      - run: deno -V
+  - name: Setup Deno (${{ matrix.deno }})
+    uses: maximousblk/setup-deno@v2
+    with:
+      version: ${{ matrix.deno }}
+
+  - run: deno -V
 ```
 
 ## License

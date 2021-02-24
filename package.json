@@ -5,7 +5,7 @@
     "fmt:check": "prettier --check .",
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "pkg": "ncc build --license LICENSE",
+    "pkg": "ncc build --minify --license LICENSE",
     "pkg:watch": "ncc build --license LICENSE --watch",
     "all": "yarn fmt && yarn build && yarn pkg"
   },
