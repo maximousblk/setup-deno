@@ -6,8 +6,9 @@ branding:
   color: 'gray-dark'
 inputs:
   version:
-    required: false
     description: 'Deno version'
+    default: "v1.x"
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'

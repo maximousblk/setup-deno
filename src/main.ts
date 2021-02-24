@@ -3,7 +3,7 @@ import install from './install';
 
 async function main() {
   try {
-    let version = '1';
+    let version = core.getInput('version');
     if (version) {
       install(version);
     } else {
