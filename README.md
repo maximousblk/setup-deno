@@ -1,6 +1,6 @@
 # Setup Deno
 
-GitHub Actions to set up Deno.
+GitHub Action to set up Deno.
 
 # Usage
 
