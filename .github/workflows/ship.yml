@@ -39,7 +39,7 @@ jobs:
 
   tag:
     runs-on: windows-latest
-    if: github.event.action = 'published'
+    if: github.event.action == 'published'
     steps:
       - name: Update convenience tags
         uses: Actions-R-Us/actions-tagger@latest
