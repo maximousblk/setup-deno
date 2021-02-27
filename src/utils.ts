@@ -15,9 +15,14 @@ export const denoZipName = {
 };
 
 export async function getDenoVersions(): Promise<string[]> {
-  const versions = await fetch('https://github.com/denoland/deno_website2/raw/main/versions.json').then((res) =>
-    res.json()
-  );
+  const versions = await fetch('https://github.com/denoland/deno_website2/raw/main/versions.json')
+    .then((res) => res.json())
+    .catch(() => {
+      const err = 'Unable to fetch Deno versions';
+      actions.error(err);
+      throw new Error(err);
+    });
+
   return versions.cli.sort(semver.compare).reverse();
 }
 
