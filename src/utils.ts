@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
-import { debug, error } from '@actions/core';
-import { platform } from 'os';
-import { compare, clean, valid, satisfies } from 'semver';
+import * as actions from '@actions/core';
+import * as os from 'os';
+import * as semver from 'semver';
 
 type Platform = 'ubuntu' | 'macos' | 'windows' | 'darwin' | 'linux' | 'win32';
 
@@ -18,18 +18,18 @@ export async function getDenoVersions(): Promise<string[]> {
   const versions = await fetch('https://github.com/denoland/deno_website2/raw/main/versions.json').then((res) =>
     res.json()
   );
-  return versions.cli.sort(compare).reverse();
+  return versions.cli.sort(semver.compare).reverse();
 }
 
 export async function getDownloadLink(os: Platform, version?: string): Promise<string> {
-  debug(`os: ${os}`);
-  debug(`input version: ${version}`);
+  actions.debug(`os: ${os}`);
+  actions.debug(`input version: ${version}`);
 
   version = await clearVersion(version ?? '');
-  debug(`parsed version: ${version}`);
+  actions.debug(`parsed version: ${version}`);
 
   const zip: string = denoZipName[os];
-  debug(`zip: ${zip}`);
+  actions.debug(`zip: ${zip}`);
 
   let dl: string;
   if (version == 'canary') {
@@ -42,13 +42,13 @@ export async function getDownloadLink(os: Platform, version?: string): Promise<s
   } else {
     dl = `https://github.com/denoland/deno/releases/latest/download/${zip}`;
   }
-  debug(`download: ${dl}`);
+  actions.debug(`download: ${dl}`);
 
   return dl;
 }
 
 export function getPlatform(): Platform {
-  const ptfm = platform();
+  const ptfm = os.platform();
 
   if (ptfm == 'darwin') {
     return 'macos';
@@ -58,7 +58,7 @@ export function getPlatform(): Platform {
     return 'windows';
   } else {
     const err = `Unexpected OS ${ptfm}`;
-    error(err);
+    actions.error(err);
     throw new Error(err);
   }
 }
@@ -70,8 +70,8 @@ export async function clearVersion(version: string): Promise<string> {
 
   if (version === 'latest') return denoVersions[0];
 
-  const c = clean(version) || '';
-  if (valid(c)) {
+  const c = semver.clean(version) || '';
+  if (semver.valid(c)) {
     version = c;
   } else {
     // query deno tags for a matching version
@@ -79,7 +79,7 @@ export async function clearVersion(version: string): Promise<string> {
 
     if (!version) {
       const err = `Unable to find Deno version '${version}'`;
-      error(err);
+      actions.error(err);
       throw new Error(err);
     }
   }
@@ -94,19 +94,19 @@ async function queryLatestMatch(version: string): Promise<string> {
 
   if (version === 'latest') return denoVersions[0];
 
-  debug(`found ${denoVersions.length} Deno versions`);
+  actions.debug(`found ${denoVersions.length} Deno versions`);
 
   for (let i = 0; i < denoVersions.length; ++i) {
-    if (satisfies(denoVersions[i], version)) {
+    if (semver.satisfies(denoVersions[i], version)) {
       version = denoVersions[i];
       break;
     }
   }
 
   if (version) {
-    debug(`matched: ${version}`);
+    actions.debug(`matched: ${version}`);
   } else {
-    debug(`'${version}' did not match any version`);
+    actions.debug(`'${version}' did not match any version`);
   }
 
   return version;
