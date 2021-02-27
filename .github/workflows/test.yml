@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deno: ['v1.7.0', 'v1.7.x', 'v1', '1', 'latest', 'canary']
+        deno: ['v1.7.0', 'v1.7.x', '1.x', '1', 'latest', 'canary']
 
     steps:
       - name: Checkout repo
