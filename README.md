@@ -6,7 +6,9 @@ GitHub Action to set up Deno.
 
 ### Inputs
 
-- `version` - Deno version. values: `[version]`, `'canary'` and `'latest'` (default: `'latest'`)
+- `version` - Deno version.
+  - values: `[semver]`, `'canary'` or `'latest'`
+  - default: `'latest'`
 
 ### Outputs
 
@@ -38,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deno: ['v1.7.1', 'v1.6.x', 'v1', '1', 'latest', 'canary']
+        deno: ['v1.7.0', 'v1.7.x', 'v1', '1', 'latest', 'canary']
 
 steps:
   - uses: actions/checkout@v2
