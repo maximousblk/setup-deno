@@ -20,7 +20,5 @@ jobs:
         run: yarn install
 
       - name: Build
-        run: yarn build
+        run: yarn dist
 
-      - name: Package
-        run: yarn pkg
