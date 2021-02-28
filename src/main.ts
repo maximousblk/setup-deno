@@ -5,7 +5,7 @@ async function main() {
   try {
     let version = actions.getInput('version');
     if (version) {
-      actions.debug(`input deno version: ${version}`);
+      actions.debug(`[MAIN] input deno version: ${version}`);
       install(version);
     } else {
       const err = `No version specified ('${version}')`;

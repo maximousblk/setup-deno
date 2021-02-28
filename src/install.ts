@@ -9,7 +9,7 @@ let tempDirectory: string = process.env['RUNNER_TEMP'] || '';
 let cacheRoot: string = process.env['RUNNER_TOOL_CACHE'] || '';
 // If directories not found, place them in common temp locations
 if (!tempDirectory || !cacheRoot) {
-  actions.debug(`home directory: ${homedirectory}`);
+  actions.debug(`[INSTALL] home directory: ${homedirectory}`);
 
   if (!tempDirectory) {
     tempDirectory = path.join(homedirectory, 'actions', 'temp');
@@ -22,34 +22,37 @@ if (!tempDirectory || !cacheRoot) {
 }
 
 export async function downloadDeno(version: string): Promise<string> {
-  actions.debug(`downloading deno '${version}'`);
+  actions.debug(`[INSTALL] downloading deno '${version}'`);
 
   const downloadUrl = await getDownloadLink(getPlatform(), version);
-  actions.debug(`downloading from '${downloadUrl}'`);
+  actions.debug(`[INSTALL] downloading from '${downloadUrl}'`);
 
   const downloadPath = await tc.downloadTool(downloadUrl);
-  actions.debug(`downloading to '${downloadPath}'`);
+  actions.debug(`[INSTALL] downloaded to '${downloadPath}'`);
 
   let extPath = await tc.extractZip(downloadPath);
-  actions.debug(`deno file path '${extPath}'`);
+  actions.debug(`[INSTALL] deno file path '${extPath}'`);
 
-  const toolPath = await tc.cacheDir(extPath, 'deno', version);
+  const clearedVersion = await clearVersion(version);
+  const toolPath = await tc.cacheDir(extPath, 'deno', clearedVersion);
+  actions.debug(`[INSTALL] deno cache path '${toolPath}'`);
 
   return toolPath;
 }
 
 export async function install(version: string): Promise<void> {
-  version = await clearVersion(version);
-  actions.debug(`resolved Deno '${version}'`);
-  actions.setOutput('version', version);
+  actions.debug(`[INSTALL] input deno version: '${version}'`);
+  const clearedVersion = await clearVersion(version);
+  actions.debug(`[INSTALL] resolved deno version: '${clearedVersion}'`);
+  actions.setOutput('version', clearedVersion);
 
-  let toolPath = tc.find('deno', version);
+  let toolPath = tc.find('deno', clearedVersion);
 
   if (toolPath) {
-    actions.debug(`Found in cache @ ${toolPath}`);
+    actions.debug(`[INSTALL] '${version}' found in cache @ ${toolPath}`);
   } else {
     // If not found in cache, download
-    actions.debug(`Deno '${version}' not found in cache. downloading...`);
+    actions.debug(`[INSTALL] '${version}' not found in cache. downloading...`);
     toolPath = await downloadDeno(version);
   }
 

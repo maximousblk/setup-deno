@@ -26,28 +26,39 @@ export async function getDenoVersions(): Promise<string[]> {
   return versions.cli.sort(semver.compare).reverse();
 }
 
-export async function getDownloadLink(os: Platform, version?: string): Promise<string> {
-  actions.debug(`os: ${os}`);
-  actions.debug(`input version: ${version}`);
+export async function getLatestCanary() {
+  return await fetch('https://dl.deno.land/canary-latest.txt')
+    .then((res) => res.text())
+    .then((text) => text.replace('\n', ''));
+}
 
-  version = await clearVersion(version ?? '');
-  actions.debug(`parsed version: ${version}`);
+export async function getLatestRelease() {
+  return await fetch('https://dl.deno.land/release-latest.txt')
+    .then((res) => res.text())
+    .then((text) => text.replace('\n', ''));
+}
+
+export async function getDownloadLink(os: Platform, version?: string): Promise<string> {
+  actions.debug(`[UTILS] os: ${os}`);
+  actions.debug(`[UTILS] input version: ${version}`);
+
+  const cleanedVersion = await clearVersion(version ?? '');
+  actions.debug(`[UTILS] parsed version: ${cleanedVersion}`);
 
   const zip: string = denoZipName[os];
-  actions.debug(`zip: ${zip}`);
+  actions.debug(`[UTILS] zip: ${zip}`);
 
   let dl: string;
   if (version == 'canary') {
-    const commit = await fetch('https://dl.deno.land/canary-latest.txt').then((res) => res.text());
-    dl = `https://dl.deno.land/canary/${commit.replace('\n', '')}/${zip}`;
+    dl = `https://dl.deno.land/canary/${cleanedVersion}/${zip}`;
   } else if (version == 'latest') {
-    dl = `https://github.com/denoland/deno/releases/latest/download/${zip}`;
+    dl = `https://dl.deno.land/release/${cleanedVersion}/${zip}`;
   } else if (version) {
-    dl = `https://github.com/denoland/deno/releases/download/v${version}/${zip}`;
+    dl = `https://github.com/denoland/deno/releases/download/v${cleanedVersion}/${zip}`;
   } else {
     dl = `https://github.com/denoland/deno/releases/latest/download/${zip}`;
   }
-  actions.debug(`download: ${dl}`);
+  actions.debug(`[UTILS] download: ${dl}`);
 
   return dl;
 }
@@ -69,11 +80,9 @@ export function getPlatform(): Platform {
 }
 
 export async function clearVersion(version: string): Promise<string> {
-  if (version === 'canary') return version;
+  if (version === 'canary') return await getLatestCanary();
 
-  const denoVersions = await getDenoVersions();
-
-  if (version === 'latest') return denoVersions[0];
+  if (version === 'latest') return await getLatestRelease();
 
   const c = semver.clean(version) || '';
   if (semver.valid(c)) {
@@ -99,7 +108,7 @@ async function queryLatestMatch(version: string): Promise<string> {
 
   if (version === 'latest') return denoVersions[0];
 
-  actions.debug(`found ${denoVersions.length} Deno versions`);
+  actions.debug(`[UTILS] found ${denoVersions.length} Deno versions`);
 
   for (let i = 0; i < denoVersions.length; ++i) {
     if (semver.satisfies(denoVersions[i], version)) {
@@ -109,9 +118,9 @@ async function queryLatestMatch(version: string): Promise<string> {
   }
 
   if (version) {
-    actions.debug(`matched: ${version}`);
+    actions.debug(`[UTILS] matched: ${version}`);
   } else {
-    actions.debug(`'${version}' did not match any version`);
+    actions.debug(`[UTILS] '${version}' did not match any version`);
   }
 
   return version;
