@@ -135,7 +135,7 @@ describe('install all', () => {
       expect(fs.existsSync(`${denoDir}.complete`)).toBe(true);
       expect(fs.existsSync(path.join(denoDir, `deno${EXTENSION}`))).toBe(true);
     }
-  }, 100000);
+  }, 150000);
 });
 
 describe('cache', () => {
