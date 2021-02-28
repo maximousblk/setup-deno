@@ -9,6 +9,11 @@ inputs:
     description: 'Deno version'
     default: 'latest'
     required: false
+outputs:
+  version:
+    description: 'version of deno that was installed'
+  deno_path:
+    description: 'path to installed deno binary'
 runs:
   using: 'node12'
   main: 'dist/index.js'
