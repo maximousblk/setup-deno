@@ -300,7 +300,7 @@ function clearVersion(version) {
         }
         else {
             // query deno tags for a matching version
-            version = yield queryLatestMatch(version);
+            version = yield queryLatestMatch(version).then((tag) => semver.clean(tag) || '');
             if (!version) {
                 const err = `Unable to find Deno version '${version}'`;
                 actions.error(err);

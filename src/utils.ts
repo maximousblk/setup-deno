@@ -89,7 +89,7 @@ export async function clearVersion(version: string): Promise<string> {
     version = c;
   } else {
     // query deno tags for a matching version
-    version = await queryLatestMatch(version);
+    version = await queryLatestMatch(version).then((tag) => semver.clean(tag) || '');
 
     if (!version) {
       const err = `Unable to find Deno version '${version}'`;
