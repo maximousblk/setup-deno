@@ -7,7 +7,7 @@ GitHub Action to set up Deno.
 ### Inputs
 
 - `version` - Deno version.
-  - values: `[semver]`, `'canary'` or `'latest'`
+  - values: `<semver>`, `<commit>`, `'canary'` or `'latest'`
   - default: `'latest'`
 
 ### Outputs

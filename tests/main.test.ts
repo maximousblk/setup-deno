@@ -46,6 +46,17 @@ describe('install', () => {
     expect(fs.existsSync(path.join(denoDir, `deno${EXTENSION}`))).toBe(true);
   }, 100000);
 
+  it('version: 4b56537ea9d5c3e5f60ca817ed00c55dcbb2131c', async () => {
+    const version = '4b56537ea9d5c3e5f60ca817ed00c55dcbb2131c';
+    const clearedVersion = await clearVersion(version);
+
+    await install(version);
+    const denoDir = path.join(toolDir, 'deno', clearedVersion, os.arch());
+
+    expect(fs.existsSync(`${denoDir}.complete`)).toBe(true);
+    expect(fs.existsSync(path.join(denoDir, `deno${EXTENSION}`))).toBe(true);
+  }, 100000);
+
   it('version: 1', async () => {
     const version = '1';
     const clearedVersion = await clearVersion(version);

@@ -259,6 +259,9 @@ function getDownloadLink(os, version) {
         else if (version == 'latest') {
             dl = `https://dl.deno.land/release/${cleanedVersion}/${zip}`;
         }
+        else if (/([a-f0-9]{40})/.test(version)) {
+            dl = `https://dl.deno.land/canary/${cleanedVersion}/${zip}`;
+        }
         else if (version) {
             dl = `https://github.com/denoland/deno/releases/download/v${cleanedVersion}/${zip}`;
         }
@@ -294,6 +297,8 @@ function clearVersion(version) {
             return yield getLatestCanary();
         if (version === 'latest')
             return yield getLatestRelease();
+        if (/([a-f0-9]{40})/.test(version))
+            return version;
         const c = semver.clean(version) || '';
         if (semver.valid(c)) {
             version = c;

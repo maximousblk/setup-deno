@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deno: ['1', 'latest', 'canary']
+        deno: ['1', 'latest', '4b56537ea9d5c3e5f60ca817ed00c55dcbb2131c', 'canary']
 
     steps:
       - name: Checkout repo

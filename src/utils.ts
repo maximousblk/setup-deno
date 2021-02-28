@@ -38,7 +38,7 @@ export async function getLatestRelease() {
     .then((text) => text.replace('\n', ''));
 }
 
-export async function getDownloadLink(os: Platform, version?: string): Promise<string> {
+export async function getDownloadLink(os: Platform, version: string): Promise<string> {
   actions.debug(`[UTILS] os: ${os}`);
   actions.debug(`[UTILS] input version: ${version}`);
 
@@ -53,6 +53,8 @@ export async function getDownloadLink(os: Platform, version?: string): Promise<s
     dl = `https://dl.deno.land/canary/${cleanedVersion}/${zip}`;
   } else if (version == 'latest') {
     dl = `https://dl.deno.land/release/${cleanedVersion}/${zip}`;
+  } else if (/([a-f0-9]{40})/.test(version)) {
+    dl = `https://dl.deno.land/canary/${cleanedVersion}/${zip}`;
   } else if (version) {
     dl = `https://github.com/denoland/deno/releases/download/v${cleanedVersion}/${zip}`;
   } else {
@@ -83,6 +85,8 @@ export async function clearVersion(version: string): Promise<string> {
   if (version === 'canary') return await getLatestCanary();
 
   if (version === 'latest') return await getLatestRelease();
+
+  if (/([a-f0-9]{40})/.test(version)) return version;
 
   const c = semver.clean(version) || '';
   if (semver.valid(c)) {
