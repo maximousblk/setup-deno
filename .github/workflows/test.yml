@@ -5,12 +5,33 @@ on:
   push:
 
 jobs:
+  test:
+    name: test / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'macos-latest', 'windows']
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run Tests
+        run: yarn test
+
   run:
     name: run / ${{ matrix.deno }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deno: ['v1.7.0', 'v1.7.x', '1.x', '1', 'latest', 'canary']
+        deno: ['1', 'latest', 'canary']
 
     steps:
       - name: Checkout repo
@@ -28,6 +49,4 @@ jobs:
         run: deno info
 
       - name: Deno path
-        run: |
-          ${{ runner.os == 'Windows' && ' Set-Alias whereis where.exe' || ''}}
-          whereis deno
+        run: whereis deno

@@ -19,6 +19,8 @@ pids
 *.seed
 *.pid.lock
 
+# test residue
+tests/_temp
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
