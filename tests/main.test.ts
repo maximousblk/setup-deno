@@ -120,24 +120,6 @@ describe('install', () => {
   });
 });
 
-describe('install all', () => {
-  beforeAll(cleanup, 2000);
-  afterAll(cleanup, 2000);
-
-  it('version: all', async () => {
-    const versions = await getDenoVersions();
-
-    for (const version of versions) {
-      await install(version);
-
-      const denoDir = path.join(toolDir, 'deno', await clearVersion(version), os.arch());
-
-      expect(fs.existsSync(`${denoDir}.complete`)).toBe(true);
-      expect(fs.existsSync(path.join(denoDir, `deno${EXTENSION}`))).toBe(true);
-    }
-  }, 150000);
-});
-
 describe('cache', () => {
   beforeAll(cleanup, 2000);
   afterAll(cleanup, 2000);
