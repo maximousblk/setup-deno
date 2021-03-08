@@ -5,6 +5,6 @@ updates:
     schedule:
       interval: 'weekly'
     commit_message:
-      prefix: "chore"
-      prefix_development: "chore"
-      include_scope: true
+      prefix: "chore(deps): "
+      prefix-development: "chore(dev_deps): "
+      include: "scope"
