@@ -1,9 +1,8 @@
-# version: 2
+version: 1
 updates:
   - package-ecosystem: 'npm'
     directory: '/'
-    schedule:
-      interval: 'weekly'
+    schedule: 'weekly'
     commit_message:
       prefix: "chore"
       prefix_development: "chore"
