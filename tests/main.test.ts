@@ -21,8 +21,8 @@ async function cleanup(): Promise<void> {
 }
 
 describe('install', () => {
-  beforeAll(cleanup, 2000);
-  afterAll(cleanup, 2000);
+  beforeAll(cleanup, 5000);
+  afterAll(cleanup, 5000);
 
   it('version: canary', async () => {
     const version = 'canary';
@@ -132,8 +132,8 @@ describe('install', () => {
 });
 
 describe('cache', () => {
-  beforeAll(cleanup, 2000);
-  afterAll(cleanup, 2000);
+  beforeAll(cleanup, 5000);
+  afterAll(cleanup, 5000);
 
   it('cache: not cached', async () => {
     const versions = await getDenoVersions();
