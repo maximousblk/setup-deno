@@ -9,19 +9,12 @@ on:
       tag:
         description: Semver tag
         required: true
-      draft:
-        description: Draft release
-        required: true
-        default: 'false'
 
 jobs:
-  build:
+  release:
     if: github.event.inputs
     runs-on: ubuntu-latest
     timeout-minutes: 20
-
-    outputs:
-      commit: ${{ steps.commit.outputs.hash }}
 
     steps:
       - name: Checkout repo
@@ -32,6 +25,11 @@ jobs:
         with:
           node-version: 12
 
+      - name: Setup Deno
+        uses: denolib/setup-deno@v2 # the irony...
+        with:
+          deno-version: v1.11.2
+
       - name: Install dependencies
         run: yarn install
 
@@ -41,27 +39,12 @@ jobs:
       - name: Commit Build
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: 'build: ${{ github.repository }}@${{ github.event.inputs.tag }}'
+          commit_message: 'build: ${{ github.repository }}@v${{ github.event.inputs.tag }}'
           file_pattern: 'dist/*'
 
-      - name: Get commit hash
+      - name: Get Commit
         id: commit
         run: echo "::set-output name=hash::$(git rev-parse HEAD)"
-
-  release:
-    if: github.event.inputs
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Setup Deno
-        uses: denolib/setup-deno@v2 # the irony...
-        with:
-          deno-version: v1.11.2
 
       - name: Generate Release Notes
         run: deno run -A https://deno.land/x/ghlog/ghlog.ts ${{ github.repository }} -v '${{ github.event.inputs.tag }}'
@@ -73,16 +56,18 @@ jobs:
           tag: 'v${{ github.event.inputs.tag }}'
           name: 'v${{ github.event.inputs.tag }}'
           bodyFile: 'CHANGELOG.md'
-          draft: '${{ github.event.inputs.tag }}'
+          draft: true
           token: ${{ github.token }}
 
   tag:
     runs-on: ubuntu-latest
     if: github.event.action == 'published'
+
+    env:
+      GITHUB_TOKEN: '${{ github.token }}'
+
     steps:
       - name: Update convenience tags
         uses: Actions-R-Us/actions-tagger@latest
-        env:
-          GITHUB_TOKEN: '${{ github.token }}'
         with:
           publish_latest_tag: true
