@@ -142,7 +142,7 @@ const install_1 = __importDefault(__nccwpck_require__(7611));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let version = actions.getInput('version');
+            let version = actions.getInput('deno-version') || actions.getInput('version');
             if (version) {
                 actions.debug(`[MAIN] input deno version: ${version}`);
                 install_1.default(version);
