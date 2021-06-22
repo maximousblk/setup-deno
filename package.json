@@ -1,8 +1,8 @@
 {
   "main": "build/main.js",
   "scripts": {
-    "fmt": "prettier --write .",
-    "fmt:check": "prettier --check .",
+    "fmt:fix": "prettier --write .",
+    "fmt": "prettier --check .",
     "test": "jest",
     "build": "tsc",
     "dist": "yarn run build && ncc build --license LICENSE",

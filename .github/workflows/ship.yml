@@ -11,9 +11,43 @@ on:
         required: true
 
 jobs:
+  build:
+    if: github.event.inputs
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    outputs:
+      commit: ${{ steps.commit.outputs.hash }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build
+        run: yarn dist
+
+      - name: Commit Build
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'build: ${{ github.repository }}@${{ github.event.inputs.tag }}'
+          file_pattern: 'dist/*'
+
+      - name: Get commit hash
+        id: commit
+        run: echo "::set-output name=hash::$(git rev-parse HEAD)"
+
   release:
     if: github.event.inputs
-    runs-on: ubuntu-20.04
+    needs: build
+    runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
@@ -23,7 +57,7 @@ jobs:
       - name: Setup Deno
         uses: denolib/setup-deno@v2 # the irony...
         with:
-          deno-version: v1.7.2
+          deno-version: v1.11.2
 
       - name: Generate Release Notes
         run: deno run -A https://deno.land/x/ghlog/ghlog.ts ${{ github.repository }} -v '${{ github.event.inputs.tag }}'
@@ -31,19 +65,20 @@ jobs:
       - name: Release v${{ github.event.inputs.tag }}
         uses: ncipollo/release-action@v1
         with:
+          commit: '${{ needs.build.outputs.commit }}'
           tag: 'v${{ github.event.inputs.tag }}'
           name: 'v${{ github.event.inputs.tag }}'
           bodyFile: 'CHANGELOG.md'
           draft: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
 
   tag:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     if: github.event.action == 'published'
     steps:
       - name: Update convenience tags
         uses: Actions-R-Us/actions-tagger@latest
         env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          GITHUB_TOKEN: '${{ github.token }}'
         with:
           publish_latest_tag: true
