@@ -31,8 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deno: ['1', 'latest', '4b56537ea9d5c3e5f60ca817ed00c55dcbb2131c', 'canary']
-
+        deno: ['1', '1.11', '1.11.2', 'latest', '4e3ec478573ede7247fd306cad1ea5bf2d5c9565', 'canary']
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -50,3 +49,8 @@ jobs:
 
       - name: Deno path
         run: whereis deno
+
+      - name: Deno Install
+        run: |
+          deno install --allow-net -n deno_curl https://deno.land/std/examples/curl.ts
+          deno_curl https://deno.land/std/examples/curl.ts
