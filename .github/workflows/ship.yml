@@ -11,10 +11,13 @@ on:
         required: true
 
 jobs:
-  release:
+  build:
     if: github.event.inputs
     runs-on: ubuntu-latest
     timeout-minutes: 20
+
+    outputs:
+      commit: ${{ steps.commit.outputs.hash }}
 
     steps:
       - name: Checkout repo
@@ -25,12 +28,7 @@ jobs:
         with:
           node-version: 12
 
-      - name: Setup Deno
-        uses: denolib/setup-deno@v2 # the irony...
-        with:
-          deno-version: v1.11.2
-
-      - name: Install dependencies
+      - name: Install Dependencies
         run: yarn install
 
       - name: Build
@@ -45,6 +43,21 @@ jobs:
       - name: Get Commit
         id: commit
         run: echo "::set-output name=hash::$(git rev-parse HEAD)"
+
+  release:
+    if: github.event.inputs
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup Deno
+        uses: maximousblk/setup-deno@main
+        with:
+          deno-version: v1.11.2
 
       - name: Generate Release Notes
         run: deno run -A https://deno.land/x/ghlog/ghlog.ts ${{ github.repository }} -v '${{ github.event.inputs.tag }}'
