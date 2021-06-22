@@ -9,6 +9,10 @@ on:
       tag:
         description: Semver tag
         required: true
+      draft:
+        description: Draft release
+        required: true
+        default: 'false'
 
 jobs:
   build:
@@ -69,7 +73,7 @@ jobs:
           tag: 'v${{ github.event.inputs.tag }}'
           name: 'v${{ github.event.inputs.tag }}'
           bodyFile: 'CHANGELOG.md'
-          draft: true
+          draft: '${{ github.event.inputs.tag }}'
           token: ${{ github.token }}
 
   tag:
