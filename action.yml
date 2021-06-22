@@ -1,19 +1,27 @@
 name: 'Install Deno'
 description: 'GitHub Action to set up Deno'
 author: 'Maximous Black'
+
 branding:
   icon: 'package'
   color: 'gray-dark'
+
 inputs:
+  deno-version:
+    description: 'Deno version'
+    default: 'latest'
+    required: false
   version:
     description: 'Deno version'
     default: 'latest'
     required: false
+
 outputs:
   version:
     description: 'version of deno that was installed'
   deno_path:
     description: 'path to installed deno binary'
+
 runs:
   using: 'node12'
   main: 'dist/index.js'

@@ -3,7 +3,7 @@ import install from './install';
 
 async function main() {
   try {
-    let version = actions.getInput('version');
+    let version = actions.getInput('deno-version') || actions.getInput('version');
     if (version) {
       actions.debug(`[MAIN] input deno version: ${version}`);
       install(version);
