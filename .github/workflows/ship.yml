@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 20
 
     outputs:
-      commit: ${{ steps.commit.outputs.hash }}
+      commit: ${{ steps.release.outputs.commit }}
 
     steps:
       - name: Checkout repo
@@ -28,6 +28,13 @@ jobs:
         with:
           node-version: 12
 
+      - name: Get Current Commit
+        id: current
+        run: echo "::set-output name=commit::$(git rev-parse --short HEAD)"
+
+      - name: Clear Build Directory
+        run: rm -rf dist
+
       - name: Install Dependencies
         run: yarn install
 
@@ -37,12 +44,12 @@ jobs:
       - name: Commit Build
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: 'build: ${{ github.repository }}@v${{ github.event.inputs.tag }}'
+          commit_message: 'dist: build ${{ github.repository }}@${{ steps.current.outputs.commit }}'
           file_pattern: 'dist/*'
 
-      - name: Get Commit
-        id: commit
-        run: echo "::set-output name=hash::$(git rev-parse HEAD)"
+      - name: Get Release Commit
+        id: release
+        run: echo "::set-output name=commit::$(git rev-parse HEAD)"
 
   release:
     if: github.event.inputs
@@ -51,16 +58,13 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
       - name: Setup Deno
         uses: maximousblk/setup-deno@main
         with:
           deno-version: v1.11.2
 
       - name: Generate Release Notes
-        run: deno run -A https://deno.land/x/ghlog/ghlog.ts ${{ github.repository }} -v '${{ github.event.inputs.tag }}'
+        run: deno run -Aq https://deno.land/x/ghlog/ghlog.ts ${{ github.repository }} -v '${{ github.event.inputs.tag }}'
 
       - name: Release v${{ github.event.inputs.tag }}
         uses: ncipollo/release-action@v1
