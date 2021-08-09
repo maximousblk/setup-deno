@@ -6,14 +6,14 @@ GitHub Action to set up Deno.
 
 ### Inputs
 
-- `version` - Deno version.
+- `deno-version` - Deno version.
   - values: `<semver>`, `<commit>`, `'canary'` or `'latest'`
   - default: `'latest'`
 
 ### Outputs
 
-- `version` - tag of the installed Deno
-- `deno_path` - path of the installed deno
+- `version` - tag of the installed Deno binary
+- `deno_path` - path of the installed Deno binary
 
 # Examples
 
@@ -48,7 +48,7 @@ steps:
   - name: Setup Deno (${{ matrix.deno }})
     uses: maximousblk/setup-deno@v1
     with:
-      version: ${{ matrix.deno }}
+      deno-version: ${{ matrix.deno }}
 
   - run: deno -V
 ```
