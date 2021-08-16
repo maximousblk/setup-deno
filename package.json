@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@actions/io": "^1.1.1",
-    "@types/jest": "^26.0.24",
+    "@types/jest": "^27.0.1",
     "@types/node": "^16.4.13",
     "@types/node-fetch": "^2.5.12",
     "@types/semver": "^7.3.8",
