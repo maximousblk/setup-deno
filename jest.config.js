@@ -1,7 +1,7 @@
-// disable debug logging while testing
+// hack to disable debug logging while testing
 const processStdoutWrite = process.stdout.write.bind(process.stdout);
 process.stdout.write = (str, encoding, cb) => {
-  if (!str.match(/^::debug::/)) {
+  if (!str.toString().match(/^::debug::/)) {
     return processStdoutWrite(str, encoding, cb);
   }
 };
