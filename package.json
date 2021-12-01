@@ -27,7 +27,7 @@
     "@types/node-fetch": "~2.5.12",
     "@types/semver": "^7.3.8",
     "@vercel/ncc": "^0.31.1",
-    "jest": "^27.3.0",
+    "jest": "^27.4.3",
     "jest-circus": "^27.4.2",
     "js-yaml": "^4.1.0",
     "prettier": "2.5.0",
