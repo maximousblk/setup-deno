@@ -45,6 +45,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: 'dist: build ${{ github.repository }}@${{ steps.current.outputs.commit }}'
+          commit_author: Github Actions <actions@github.com>
           file_pattern: 'dist/*'
 
       - name: Get Release Commit
