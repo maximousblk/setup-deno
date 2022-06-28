@@ -11,10 +11,6 @@ inputs:
     description: 'Deno version'
     default: 'latest'
     required: false
-  version:
-    description: 'Deno version'
-    default: 'latest'
-    required: false
 
 outputs:
   version:
