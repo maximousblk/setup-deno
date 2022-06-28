@@ -62,7 +62,7 @@ jobs:
       - name: Setup Deno
         uses: maximousblk/setup-deno@main
         with:
-          deno-version: v1.11.2
+          deno-version: 1.23
 
       - name: Generate Release Notes
         run: deno run -Aq https://deno.land/x/ghlog/ghlog.ts ${{ github.repository }} -v '${{ github.event.inputs.tag }}'
