@@ -13,12 +13,12 @@ jobs:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: 12
+          node-version: 16
 
       - name: Install dependencies
         run: yarn install
@@ -34,7 +34,7 @@ jobs:
         deno: ['1', '1.11', '1.11.2', 'latest', '4e3ec478573ede7247fd306cad1ea5bf2d5c9565', 'canary']
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Run action
         uses: ./
