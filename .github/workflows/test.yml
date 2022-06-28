@@ -39,7 +39,7 @@ jobs:
       - name: Run action
         uses: ./
         with:
-          version: ${{ matrix.deno }}
+          deno-version: ${{ matrix.deno }}
 
       - name: Deno version
         run: deno --version
