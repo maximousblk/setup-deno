@@ -24,10 +24,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup Deno
-        uses: maximousblk/setup-deno@v1 # Installs latest version
+        uses: maximousblk/setup-deno@v2 # Installs latest version
 
       - run: deno -V
 ```
@@ -40,13 +40,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deno: ['v1.7.0', 'v1.7.x', '1.x', '1', 'latest', 'canary']
+        deno: ['v1.23.0', 'v1.23.x', '1.x', '1', 'latest', 'canary']
 
 steps:
-  - uses: actions/checkout@v2
+  - uses: actions/checkout@v3
 
   - name: Setup Deno (${{ matrix.deno }})
-    uses: maximousblk/setup-deno@v1
+    uses: maximousblk/setup-deno@v2
     with:
       deno-version: ${{ matrix.deno }}
 
