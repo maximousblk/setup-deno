@@ -28,7 +28,7 @@
     "@types/semver": "^7.3.13",
     "@vercel/ncc": "^0.36.1",
     "jest": "^27.5.1",
-    "jest-circus": "^27.5.1",
+    "jest-circus": "^29.5.0",
     "js-yaml": "^4.1.0",
     "prettier": "^2.8.4",
     "ts-jest": "^27.1.5",
